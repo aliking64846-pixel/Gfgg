@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07172e">
+  <meta name="description" content="مستقبلي 100 — نموذج أولي لتعلّم الاجتماعيات للثالث المتوسط في العراق.">
+  <title>مستقبلي 100 | الاجتماعيات</title>
+  <link rel="stylesheet" href="assets/css/app.css">
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="مستقبلي 100 - الرئيسية">
+        <span class="brand-mark">م١٠٠</span>
+        <span><strong>مستقبلي 100</strong><small>رحلتك نحو الدرجة الكاملة</small></span>
+      </a>
+      <button id="sound-toggle" class="icon-button" type="button" aria-pressed="false" title="تبديل المؤثرات">♫</button>
+    </header>
+
+    <main>
+      <section class="hero panel">
+        <div class="hero-copy">
+          <span class="eyebrow"><span class="pulse"></span> النموذج التعليمي الأول</span>
+          <h1>الاجتماعيات <span>للثالث المتوسط</span></h1>
+          <p>نفهم المعلومة، نراجعها، ثم نختبر أنفسنا — خطوة بخطوة.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#lessons">استكشف الدروس <span aria-hidden="true">←</span></a>
+            <a class="button secondary" href="#progress">متابعة التقدم</a>
+          </div>
+        </div>
+        <div class="orbit-art" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="globe"><span class="globe-line line-a"></span><span class="globe-line line-b"></span><span class="globe-line line-c"></span><span class="globe-dot"></span></div>
+          <span class="floating-tag tag-top">تعلم ذكي</span><span class="floating-tag tag-bottom">العراق 🇮🇶</span>
+        </div>
+      </section>
+
+      <section class="stats-grid" id="progress" aria-label="ملخص التقدم">
+        <article class="stat-card panel"><span class="stat-icon">📘</span><span class="stat-label">الدروس المكتملة</span><strong id="completed-count">0</strong><small>من الدروس المعتمدة</small></article>
+        <article class="stat-card panel"><span class="stat-icon">🎯</span><span class="stat-label">نسبة الإنجاز</span><strong id="completion-rate">0%</strong><small>تتحدث مع تقدمك</small></article>
+        <article class="stat-card panel"><span class="stat-icon">🔁</span><span class="stat-label">للمراجعة</span><strong id="review-count">0</strong><small>أسئلة تحتاج تثبيتاً</small></article>
+      </section>
+
+      <section class="section-heading" id="lessons">
+        <div><span class="eyebrow">ابدأ رحلتك</span><h2>محتوى المادة</h2><p>ستُضاف الدروس بعد مطابقة المحتوى مع الكتاب الرسمي المعتمد.</p></div>
+        <label class="search-box"><span aria-hidden="true">⌕</span><input id="lesson-search" type="search" placeholder="ابحث عن فصل أو درس..." aria-label="ابحث عن فصل أو درس"></label>
+      </section>
+
+      <section id="chapter-list" class="chapter-list" aria-live="polite">
+        <article class="empty-state panel">
+          <div class="empty-icon">📚</div>
+          <h3>نجهّز المنهج الصحيح أولاً</h3>
+          <p>لم نضف أسماء فصول أو أسئلة غير متحقَّق منها. بعد التحقق من طبعة الكتاب الرسمية، سيظهر المحتوى هنا منظماً درساً بعد درس.</p>
+          <span class="status-pill"><span></span> المحتوى بانتظار التحقق من المصدر</span>
+        </article>
+      </section>
+
+      <section class="learning-roadmap panel">
+        <div class="roadmap-title"><span class="eyebrow">خطة البناء</span><h2>من الكتاب إلى تجربة تعليمية متكاملة</h2></div>
+        <div class="roadmap-grid">
+          <div class="roadmap-step active"><span>01</span><div><strong>توثيق المنهج</strong><small>الكتاب والفهرس والطبعة</small></div></div>
+          <div class="roadmap-step"><span>02</span><div><strong>بناء الدروس</strong><small>شرح وأسئلة من مصادر موثوقة</small></div></div>
+          <div class="roadmap-step"><span>03</span><div><strong>الفهم والمراجعة</strong><small>اختبارات وتحليل الأخطاء</small></div></div>
+          <div class="roadmap-step"><span>04</span><div><strong>العالم التفاعلي</strong><small>تطوير تدريجي بعد اختبار الأساس</small></div></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="التنقل الرئيسي">
+      <a class="nav-item active" href="./"><span>⌂</span><small>الرئيسية</small></a>
+      <a class="nav-item" href="#lessons"><span>▤</span><small>الدروس</small></a>
+      <a class="nav-item" href="#progress"><span>◷</span><small>تقدمي</small></a>
+      <button class="nav-item" id="about-button" type="button"><span>ⓘ</span><small>عن التطبيق</small></button>
+    </nav>
+  </div>
+  <dialog id="about-dialog" class="about-dialog">
+    <button id="close-about" class="dialog-close" type="button" aria-label="إغلاق">×</button>
+    <span class="eyebrow">عن مستقبلي 100</span><h2>نتعلم حتى نتقن</h2>
+    <p>هذا إصدار تأسيسي لمادة الاجتماعيات للثالث المتوسط في العراق. لا تُعرض فيه أسئلة أو معلومات على أنها وزارية قبل التحقق من مصدرها.</p>
+    <button id="confirm-about" class="button primary full-button" type="button">فهمت</button>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
