@@ -32,6 +32,24 @@
     .modal h2 { font-size:20px; }
     .status { font-size:9px; bottom:5px; left:5px; }
   }
+
+  .study-panel{position:fixed;inset:0;z-index:30;display:none;overflow:auto;background:radial-gradient(ellipse at top,#0a2b50,#020817 65%);padding:20px;color:#f4fbff}
+  .study-panel.open{display:block}
+  .study-shell{max-width:900px;margin:0 auto;padding:18px}
+  .study-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid #00cfff55;padding-bottom:16px}
+  .study-panel h2{color:#66eaff;margin:10px 0}
+  .study-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+  .study-card{background:#071a30;border:1px solid #087cb688;border-radius:16px;padding:18px}
+  .study-card p{line-height:1.8;color:#c9e5f7}
+  .study-btn{border:1px solid #079bdc;background:#062b4b;color:#fff;padding:11px 15px;border-radius:12px;font:inherit;cursor:pointer;margin:4px}
+  .study-btn.primary{background:linear-gradient(90deg,#087bff,#00bfe8);color:#001324;font-weight:bold}
+  .study-progress{height:8px;background:#16314a;border-radius:9px;overflow:hidden;margin:12px 0}
+  .study-progress span{display:block;height:100%;width:0;background:#00cfff;transition:width .25s}
+  .study-choice{display:block;width:100%;text-align:right;margin:8px 0;padding:12px;border-radius:10px;border:1px solid #24506c;background:#091f36;color:#fff;font:inherit;cursor:pointer}
+  .study-choice:focus,.study-choice:hover{border-color:#00cfff}
+  .study-note{color:#9bbbd0;font-size:13px;line-height:1.8}
+  @media(max-width:600px){.study-shell{padding:8px}.study-panel{padding:8px}}
+
 </style>
 </head>
 <body>
@@ -61,6 +79,19 @@
   </section>
 </div>
 <div class="toast" id="toast" role="status"></div>
+
+<div class="study-panel" id="studyPanel" role="region" aria-label="مساحة الدراسة">
+  <div class="study-shell">
+    <div class="study-top"><div><div class="study-note">مستقبلي 100 · مساحة الدراسة</div><h2 id="studyHeading">مساحة المادة</h2></div><button class="study-btn" id="studyBack">رجوع للواجهة</button></div>
+    <div class="study-grid">
+      <section class="study-card"><h3>خطة المادة</h3><p id="studyDescription">ابدأ بخطوة قصيرة وسجّل تقدمك على هذا الجهاز.</p><div class="study-progress"><span id="studyBar"></span></div><p id="studyProgressText">إنجازك: 0%</p><button class="study-btn primary" id="markStudy">تسجيل مراجعة اليوم</button></section>
+      <section class="study-card"><h3>اختبار سريع</h3><p id="quizQuestion">هل الأفضل أن تختبر فهمك بعد قراءة الدرس؟</p><button class="study-choice" data-answer="yes">نعم، حتى أتأكد من الفهم</button><button class="study-choice" data-answer="no">لا، أقرأ فقط دون مراجعة</button><p id="quizFeedback" aria-live="polite"></p></section>
+      <section class="study-card"><h3>الخطوة التالية</h3><p>هذه بداية عملية قابلة للتطوير. محتوى الكتاب والوزاريات المعتمدة يجب إضافته لكل مادة قبل اعتبارها مكتملة.</p><button class="study-btn" id="resetStudy">تصفير تقدم هذه المادة</button></section>
+    </div>
+    <p class="study-note">يُحفظ تقدم هذه النسخة في التخزين المحلي للمتصفح على هذا الجهاز، وليس في حساب سحابي.</p>
+  </div>
+</div>
+
 <script>
 (() => {
   const wrap = document.getElementById('modalWrap');
@@ -76,13 +107,53 @@
   }));
   function closeModal() { wrap.classList.remove('open'); }
   document.getElementById('closeBtn').addEventListener('click', closeModal);
+  const studyPanel = document.getElementById('studyPanel');
+  const studyHeading = document.getElementById('studyHeading');
+  const studyDescription = document.getElementById('studyDescription');
+  const studyBar = document.getElementById('studyBar');
+  const studyProgressText = document.getElementById('studyProgressText');
+  const quizFeedback = document.getElementById('quizFeedback');
+  let activeSubject = 'عام';
+  const storageKey = name => 'mustaqbali100-progress-' + name;
+  function readProgress(name) {
+    try { return Math.max(0, Math.min(100, Number(localStorage.getItem(storageKey(name))) || 0)); }
+    catch (_) { return 0; }
+  }
+  function renderProgress() {
+    const value = readProgress(activeSubject);
+    studyBar.style.width = value + '%';
+    studyProgressText.textContent = 'إنجازك المسجل: ' + value + '%';
+    document.getElementById('markStudy').textContent = value >= 100 ? 'تم إكمال المراجعة' : 'تسجيل مراجعة اليوم (+20%)';
+  }
   document.getElementById('continueBtn').addEventListener('click', () => {
-    const current = title.textContent;
+    activeSubject = title.textContent || 'عام';
     closeModal();
-    toast.textContent = 'تم اختيار: ' + current + ' — هذه واجهة تجريبية، وليست مرتبطة بعد بصفحات الدروس الفعلية.';
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+    studyHeading.textContent = activeSubject;
+    studyDescription.textContent = 'مساحة متابعة لمادة ' + activeSubject + '. استخدمها لتسجيل المراجعة وتجربة الاختبار الأولي.';
+    quizFeedback.textContent = '';
+    renderProgress();
+    studyPanel.classList.add('open');
+    document.getElementById('studyBack').focus();
+  });
+  document.getElementById('studyBack').addEventListener('click', () => {
+    studyPanel.classList.remove('open');
+  });
+  document.getElementById('markStudy').addEventListener('click', () => {
+    const next = Math.min(100, readProgress(activeSubject) + 20);
+    try { localStorage.setItem(storageKey(activeSubject), String(next)); } catch (_) {}
+    renderProgress();
+    quizFeedback.textContent = 'تم تحديث تقدم المراجعة على هذا الجهاز.';
+  });
+  document.querySelectorAll('.study-choice').forEach(choice => choice.addEventListener('click', () => {
+    quizFeedback.textContent = choice.dataset.answer === 'yes'
+      ? 'إجابة صحيحة! الاختبار بعد القراءة يساعد على تثبيت المعلومات وكشف نقاط الضعف.'
+      : 'حاول مرة أخرى: الاختبار يساعدك على معرفة ما فهمته وما يحتاج إلى مراجعة.';
+    quizFeedback.style.color = choice.dataset.answer === 'yes' ? '#65f0b2' : '#ffd27a';
+  }));
+  document.getElementById('resetStudy').addEventListener('click', () => {
+    try { localStorage.removeItem(storageKey(activeSubject)); } catch (_) {}
+    renderProgress();
+    quizFeedback.textContent = 'تم تصفير تقدم هذه المادة على هذا الجهاز.';
   });
   wrap.addEventListener('click', e => { if (e.target === wrap) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
