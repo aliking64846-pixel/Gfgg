@@ -83,8 +83,9 @@ async function checkWebsite(input) {
       lookup: (_hostname, _options, callback) => callback(null, chosen.address, chosen.family),
       rejectUnauthorized: true
     }, res => {
-      res.resume();
+      // Headers are the only data needed; close immediately so a server cannot stream a huge body.
       resolve({ status: res.statusCode, headers: res.headers });
+      res.destroy();
     });
     req.on("timeout", () => req.destroy(new Error("انتهت مهلة الاتصال.")));
     req.on("error", reject);
