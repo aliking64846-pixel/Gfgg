@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
+const SCANS_ENABLED = process.env.CYBERGUARD_ENABLE_SCANS === "true";
 
 app.disable("x-powered-by");
 app.use(express.json({ limit: "100kb" }));
@@ -14,10 +15,35 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "CyberGuard API", mode: "educational", timestamp: new Date().toISOString() });
+  res.json({
+    ok: true,
+    service: "CyberGuard API",
+    mode: SCANS_ENABLED ? "local-authorized-checks-enabled" : "educational",
+    websiteChecksEnabled: SCANS_ENABLED,
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Defensive log parsing only: no active scanning or remote-target interaction.
+// Low-impact HTTPS posture check. Explicit opt-in prevents accidental activation on public deployments.
+if (SCANS_ENABLED) {
+  const { checkWebsite } = require("./site-check");
+  app.post("/api/check-website", async (req, res) => {
+    if (req.body?.authorized !== true) {
+      return res.status(403).json({ error: "أكد أن لديك ملكية الموقع أو تصريحاً صريحاً لفحصه." });
+    }
+    try {
+      const result = await checkWebsite(req.body?.target);
+      res.json(result);
+    } catch (error) {
+      res.status(400).json({
+        ok: false,
+        error: error instanceof Error ? error.message : "تعذر إجراء الفحص."
+      });
+    }
+  });
+}
+
+// Defensive log parsing only: local text analysis, not a definitive detection engine.
 app.post("/api/analyze-logs", (req, res) => {
   const raw = typeof req.body?.logs === "string" ? req.body.logs : "";
   if (!raw.trim()) return res.status(400).json({ error: "أرسل نص السجلات داخل الحقل logs." });
@@ -41,8 +67,9 @@ app.post("/api/analyze-logs", (req, res) => {
   });
 });
 
-// Serve the web app from the repository root when running the API server.
 app.use(express.static(path.join(__dirname)));
 app.get("*", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
 
-app.listen(PORT, () => console.log(`CyberGuard API listening on port ${PORT}`));
+app.listen(PORT, "127.0.0.1", () => {
+  console.log(`CyberGuard API listening locally on http://127.0.0.1:${PORT}`);
+});
