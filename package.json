@@ -1,12 +1,12 @@
 {
   "name": "cyberguard-security-dashboard",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
-  "description": "CyberGuard educational cybersecurity dashboard API",
+  "description": "CyberGuard local cybersecurity lab with real host diagnostics and opt-in bounded scans",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node --check server.js && node --check site-check.js"
+    "test": "node --check server.js && node --check site-check.js && node --check lab-tools.js && node --test"
   },
   "engines": {
     "node": ">=18"
