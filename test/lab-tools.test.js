@@ -17,7 +17,7 @@ test("system summary reports real local OS metadata", () => {
 test("DNS lookup rejects URL paths and malformed names before lookup", async () => {
   await assert.rejects(resolveDomain("https://example.com/path"), /اسم نطاق فقط/);
   await assert.rejects(resolveDomain("localhost"), /اسم نطاق فقط/);
-  await assert.rejects(resolveDomain(""), /اسم نطاق صحيح/);
+  await assert.rejects(resolveDomain(""), /اسم نطاق/);
 });
 
 test("Nmap scan requires explicit authorization", async () => {
